@@ -1,0 +1,70 @@
+{
+  "generatedAt": "2026-08-22T04:55:09.213Z",
+  "claim": "Constructive cross-domain evidence: the same domain-independent controller enforces the stated invariants in every fixture. This is not a real-world outcome study.",
+  "enginePolicy": {
+    "workspaceCapacity": 6,
+    "maxPromptChars": 24000,
+    "l4MinimumModels": 3
+  },
+  "domains": [
+    "manufacturing quality",
+    "scientific research",
+    "software engineering"
+  ],
+  "allPassed": true,
+  "records": [
+    {
+      "example": "manufacturing-quality-containment",
+      "domain": "manufacturing quality",
+      "level": "L3",
+      "taskCount": 3,
+      "humanEditedTask": "measurement",
+      "invalidatedTaskIds": [
+        "measurement",
+        "disposition"
+      ],
+      "beforeEditGatePassed": true,
+      "afterEditGatePassed": false,
+      "staleAffectedEvidence": true,
+      "afterReverificationGatePassed": true,
+      "l4ActiveModels": 0,
+      "finalRevision": 9
+    },
+    {
+      "example": "scientific-replication-review",
+      "domain": "scientific research",
+      "level": "L4",
+      "taskCount": 4,
+      "humanEditedTask": "data-audit",
+      "invalidatedTaskIds": [
+        "data-audit",
+        "model-competition",
+        "replication"
+      ],
+      "beforeEditGatePassed": true,
+      "afterEditGatePassed": false,
+      "staleAffectedEvidence": true,
+      "afterReverificationGatePassed": true,
+      "l4ActiveModels": 3,
+      "finalRevision": 14
+    },
+    {
+      "example": "software-release-migration",
+      "domain": "software engineering",
+      "level": "L3",
+      "taskCount": 3,
+      "humanEditedTask": "inventory",
+      "invalidatedTaskIds": [
+        "inventory",
+        "design",
+        "rehearsal"
+      ],
+      "beforeEditGatePassed": true,
+      "afterEditGatePassed": false,
+      "staleAffectedEvidence": true,
+      "afterReverificationGatePassed": true,
+      "l4ActiveModels": 0,
+      "finalRevision": 9
+    }
+  ]
+}

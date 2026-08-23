@@ -1,0 +1,8 @@
+- insert:
+    - id: project-cybersyn
+      name: project-cybersyn-dsh-plugin
+      config:
+        workspaceCapacity: 6
+        maxPromptChars: 24000
+        l4MinimumModels: 3
+        registerBundledSkill: true

@@ -1,0 +1,53 @@
+{
+  "name": "software-release-migration",
+  "seed": {
+    "id": "example-software-release",
+    "sessionId": "example-session-software",
+    "title": "Zero-downtime schema migration",
+    "domain": "software engineering",
+    "level": "L3",
+    "objective": "Migrate a production schema without data loss or an unsafe rollback gap.",
+    "constraints": ["backward-compatible deploy order", "measured rollback rehearsal"],
+    "tasks": [
+      {
+        "id": "inventory",
+        "title": "Inventory contracts",
+        "depth": 1,
+        "dependsOn": [],
+        "generatedPrompt": "Enumerate every reader, writer, invariant, and rollback dependency. Produce a versioned contract inventory.",
+        "claims": ["All schema consumers are identified"]
+      },
+      {
+        "id": "design",
+        "title": "Design expand-contract plan",
+        "depth": 2,
+        "dependsOn": ["inventory"],
+        "generatedPrompt": "Design the expand-migrate-contract sequence and map each step to an observable rollback condition.",
+        "claims": ["The deployment sequence is backward compatible"]
+      },
+      {
+        "id": "rehearsal",
+        "title": "Rehearse and gate",
+        "depth": 3,
+        "dependsOn": ["design"],
+        "generatedPrompt": "Run a production-shaped rehearsal, compare row counts and checksums, then record rollback timing evidence.",
+        "claims": ["Migration and rollback meet the acceptance envelope"]
+      }
+    ]
+  },
+  "workspace": {
+    "id": "rollback-boundary",
+    "kind": "constraint",
+    "content": "No contract step before checksum parity and rollback rehearsal pass.",
+    "sourceTaskId": "design",
+    "scope": "all migration tasks",
+    "priority": 5,
+    "removalCondition": "Migration rollback window closes with checksum parity.",
+    "updatedAt": "fixture"
+  },
+  "edit": {
+    "taskId": "inventory",
+    "replacement": "Enumerate every reader, writer, invariant, rollback dependency, and delayed batch consumer. Produce a versioned contract inventory.",
+    "reason": "Human reviewer identified delayed consumers as a missing boundary condition."
+  }
+}

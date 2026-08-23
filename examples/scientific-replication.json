@@ -1,0 +1,90 @@
+{
+  "name": "scientific-replication-review",
+  "seed": {
+    "id": "example-scientific-replication",
+    "sessionId": "example-session-science",
+    "title": "Replication claim assessment",
+    "domain": "scientific research",
+    "level": "L4",
+    "objective": "Assess whether a reported intervention effect survives data audit, model competition, and adversarial replication.",
+    "constraints": ["preregistered exclusions", "independent reproduction", "falsifiable alternatives"],
+    "tasks": [
+      {
+        "id": "claim-frame",
+        "title": "Operationalize the claim",
+        "depth": 1,
+        "dependsOn": [],
+        "generatedPrompt": "Translate the headline claim into measurable estimands, populations, interventions, comparators, and falsifiers.",
+        "claims": ["The target claim is operationally testable"]
+      },
+      {
+        "id": "data-audit",
+        "title": "Audit provenance and exclusions",
+        "depth": 2,
+        "dependsOn": ["claim-frame"],
+        "generatedPrompt": "Reconstruct data provenance, exclusion decisions, missingness, and leakage checks from immutable artifacts.",
+        "claims": ["The analysis population is traceable"]
+      },
+      {
+        "id": "model-competition",
+        "title": "Compare structural explanations",
+        "depth": 3,
+        "dependsOn": ["data-audit"],
+        "generatedPrompt": "Compare the intervention, confounding, and measurement-bias models on predeclared predictions and falsifiers.",
+        "claims": ["Alternatives are compared on discriminating evidence"]
+      },
+      {
+        "id": "replication",
+        "title": "Run adversarial replication gate",
+        "depth": 4,
+        "dependsOn": ["model-competition"],
+        "generatedPrompt": "Execute the preregistered replication, report all deviations, and gate the claim on reproduced effect and sensitivity bounds.",
+        "claims": ["The conclusion is supported by independent current evidence"]
+      }
+    ]
+  },
+  "workspace": {
+    "id": "falsification-priority",
+    "kind": "goal",
+    "content": "Prioritize observations that discriminate among active structural models.",
+    "sourceTaskId": "model-competition",
+    "scope": "model comparison and replication",
+    "priority": 4,
+    "removalCondition": "All active models have been discriminated or explicitly retained as unresolved.",
+    "updatedAt": "fixture"
+  },
+  "models": [
+    {
+      "id": "intervention",
+      "name": "Causal intervention effect",
+      "assumptions": ["exchangeability after preregistered controls"],
+      "prediction": "Effect reproduces with stable direction and bounded heterogeneity.",
+      "falsifier": "Independent replication confidence interval excludes the minimally relevant effect.",
+      "status": "active",
+      "updatedAt": "fixture"
+    },
+    {
+      "id": "confounding",
+      "name": "Residual confounding",
+      "assumptions": ["an unmeasured common cause remains"],
+      "prediction": "Effect attenuates under negative controls or sensitivity adjustment.",
+      "falsifier": "Negative controls are null and sensitivity bounds remain beyond plausible confounding.",
+      "status": "active",
+      "updatedAt": "fixture"
+    },
+    {
+      "id": "measurement",
+      "name": "Measurement artifact",
+      "assumptions": ["outcome scoring leaks treatment state"],
+      "prediction": "Blinded independent scoring removes the observed effect.",
+      "falsifier": "The effect persists with blinded validated measurement.",
+      "status": "active",
+      "updatedAt": "fixture"
+    }
+  ],
+  "edit": {
+    "taskId": "data-audit",
+    "replacement": "Reconstruct data provenance, preregistered and post-hoc exclusions, missingness, temporal leakage, and analyst degrees of freedom from immutable artifacts.",
+    "reason": "The replication lead separated preregistered from post-hoc exclusions."
+  }
+}

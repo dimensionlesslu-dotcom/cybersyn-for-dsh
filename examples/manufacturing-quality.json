@@ -1,0 +1,53 @@
+{
+  "name": "manufacturing-quality-containment",
+  "seed": {
+    "id": "example-manufacturing-quality",
+    "sessionId": "example-session-manufacturing",
+    "title": "Bearing-line anomaly containment",
+    "domain": "manufacturing quality",
+    "level": "L3",
+    "objective": "Contain a bearing vibration anomaly while preserving traceability and preventing false release.",
+    "constraints": ["lot-level genealogy", "independent gauge verification"],
+    "tasks": [
+      {
+        "id": "hazard-map",
+        "title": "Map failure envelope",
+        "depth": 1,
+        "dependsOn": [],
+        "generatedPrompt": "Map affected lots, machines, shifts, and plausible failure modes. State the containment boundary explicitly.",
+        "claims": ["The suspected population is bounded"]
+      },
+      {
+        "id": "measurement",
+        "title": "Validate measurement system",
+        "depth": 2,
+        "dependsOn": ["hazard-map"],
+        "generatedPrompt": "Test repeatability, reproducibility, calibration drift, and sampling bias before classifying units.",
+        "claims": ["The inspection signal is fit for disposition"]
+      },
+      {
+        "id": "disposition",
+        "title": "Gate lot disposition",
+        "depth": 3,
+        "dependsOn": ["measurement"],
+        "generatedPrompt": "Apply the verified measurement rule to every contained lot and preserve evidence for release, rework, or scrap.",
+        "claims": ["No unit is released without current disposition evidence"]
+      }
+    ]
+  },
+  "workspace": {
+    "id": "containment-rule",
+    "kind": "decision",
+    "content": "Quarantine remains active until gauge R&R and traceability both pass.",
+    "sourceTaskId": "measurement",
+    "scope": "all contained lots",
+    "priority": 5,
+    "removalCondition": "Disposition evidence exists for every contained lot.",
+    "updatedAt": "fixture"
+  },
+  "edit": {
+    "taskId": "measurement",
+    "replacement": "Test repeatability, reproducibility, calibration drift, fixture wear, and sampling bias using an independent master gauge before classifying units.",
+    "reason": "The quality engineer added fixture wear and an independent reference."
+  }
+}

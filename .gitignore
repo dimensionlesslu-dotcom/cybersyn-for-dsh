@@ -1,0 +1,5 @@
+node_modules/
+lib/
+.dsh/
+.pack-test-*/
+*.tgz
