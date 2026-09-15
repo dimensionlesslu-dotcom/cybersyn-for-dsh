@@ -47,6 +47,9 @@ describe('model-facing tools', () => {
       thresholds: { minimumCompletionRatio: 1, maximumFailureRatio: 0, maximumQualityDrop: 0.05 }, expectedRevision: 1,
     }, { agent: { session: { header: { id: 'actual-calling-session' } } } } as never)
     expect(planOutput).toMatchObject({ workflowId: 'tool-workflow', revision: 2 })
+    const packetState = JSON.parse((planOutput as { stateJson: string }).stateJson)
+    expect(packetState.assurance).toBe('T2-reported-evidence')
+    expect(packetState.workflow.auditPipelines[0].packets[0].prompt).toBeTruthy()
     expect(store.get('tool-workflow')?.auditPipelines[0]?.packets[0]?.status).toBe('planned')
 
     await expect(tools[6]!.execute({ workflowId: 'tool-workflow' }, {} as never)).rejects.toThrow(/calling agent session/)

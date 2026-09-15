@@ -81,7 +81,7 @@ function roleSelection(input: AuditPlanInput, level: ControlLevel): AuditRole[] 
     if (signal === 'C') add('environment')
   }
   if (selected.length === 0) add('measurement')
-  return selected.slice(0, cap)
+  return selected.slice(0, 1)
 }
 
 function list(title: string, values: string[]): string {

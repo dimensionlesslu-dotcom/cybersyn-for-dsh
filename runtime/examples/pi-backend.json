@@ -1,0 +1,6 @@
+{
+  "type": "pi",
+  "provider": "openai",
+  "model": "gpt-4.1-mini",
+  "apiKeyEnv": "CYBERSYN_MODEL_API_KEY"
+}

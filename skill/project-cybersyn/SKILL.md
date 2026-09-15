@@ -1,79 +1,73 @@
 ---
 name: project-cybersyn
-description: Evidence-first hierarchical task control for heterogeneous, iterative, or open-ended work. Use it to decompose L3/L4 work, diagnose A/B/C/D deviations, maintain requirement evidence, expose assumptions, and keep human authority over structural changes. It works with or without the Project Cybersyn Harness plugin.
+description: "按基座能力选择最小充分控制的迭代工作协议。适用于多轮修改、复杂方案设计、证据核对与交付前验收。强基座默认只读本 MD；局部能力缺口按需加 tools，持续执行不稳定再启用包内 harness。"
+metadata:
+  version: "3.0.0"
 ---
 
 # Project Cybersyn
 
-Use a closed loop only as strong as the task requires. The symbols and control-language in this Skill are qualitative engineering analogies unless a measurable system model is actually available.
+用证据完成任务，用反馈纠正策略。保留用户目标、范围和已有授权，遵守宿主规则。
 
-## Host and authority
+## 选择最轻且足够的支撑
 
-Host rules, permissions, and the user's latest instruction always win. Never treat this Skill as authority to run tools, change files, contact people, install software, or create subagents. Human edits to task prompts change the controller and require explicit impact review.
+| 模式 | 何时使用 | 责任 |
+| --- | --- | --- |
+| T1：本 MD | 基座能稳定规划、执行、验证和纠错；默认首选 | 原则、判据和关键边界，执行方法由模型选择 |
+| T2：MD + tools | 状态记忆、证据核对或结构化操作有局部缺口 | 只启用补足该缺口的工具，宿主继续组织工作 |
+| T3：MD + tools + harness | 步骤遗漏、工具编排、上下文遗失或无效循环持续发生 | 运行时持有流程、预算和恢复；模型只处理本步目标与少量动作 |
 
-## Complexity routing
+基座越强，额外指令和控制越应精简。外部支撑增加时，模型承担的复杂度应减少。
+T1 是完整使用形态，仍可使用宿主现有读写、测试和检索能力；不重复建设宿主已有能力。
+不为选层额外启动例行探针、状态文件或子代理。已有有效评测/配置可直接决定模式，否则从满足任务约束的最轻路径开始。
+更强基座或后续证据表明轻层足够时，在任务边界撤除多余支撑，保留目标和未完成项。
+明确要求的隔离、持久化和权限边界不因模型强而省略；工具缺席不能伪装为已执行。
 
-- L1: one clear local task. Plan briefly, act, run the relevant check, and compare with the request.
-- L2: many homogeneous items. Use one repeatable procedure and batch verification.
-- L3: heterogeneous modules or hidden assumptions. Show the task graph and decompose it into independently verifiable L1/L2 leaves.
-- L4: objectives, environment, or structure remain contested. Keep multiple structural models, expose disagreements, and ask the human to decide value- or authority-sensitive changes.
+## 最小闭环
 
-Do not promote a task merely to display process. For L3/L4, state the active assumptions and the evidence that would falsify them.
+明确目标与可检查的验收项 → 执行最小有用动作 → 读取真实结果 → 对照验收 → 修正或交付。
+先观察再判断。已有证据够用时不重复测试；失败时先找能改变下一步决定的最小证据。
 
-## Runtime plugin
+任务复杂度与 T1–T3 分开判断：
 
-When `cybersyn_*` tools are available:
+- L1：范围小、目标明确。直接处理并核对，不要求日志、账本文件或审计。
+- L2：大量同质工作。检查代表性案例与批量边界。
+- L3：异构模块/假设互相依赖。先拆为可独立验收的子任务，再查接口和集成。
+- L4：目标或环境持续变化。保留假设和实质分歧，用户决定目标取舍。
 
-1. call `cybersyn_start` once the objective, levels, dependencies, prompts, and claims are explicit;
-2. use `cybersyn_task_update` to record real observations, evidence, deviations, and legal status transitions;
-3. use `cybersyn_workspace_update` to maintain only the small set of coordination facts needed now;
-4. use `cybersyn_model_update` for L4 structural hypotheses;
-5. when an independent audit is justified, use `cybersyn_audit_plan` to assemble PromptPackets, then let the host run them through its own subagent/workflow capability;
-6. project paired host lifecycle facts with `cybersyn_audit_update`; do not invent run ids, metrics, findings, or completion;
-7. call `cybersyn_inspect` before claiming convergence.
+强基座处理 L3/L4 仍可用 T1。需要交接时可简记：目标/约束、有效证据、未完成项、下一动作。
 
-The visual workspace is a projection of plugin state. It is not model chain of thought. A human prompt edit creates a new revision, invalidates affected evidence, and may require tasks to be re-run.
+## 用偏差选择响应
 
-When the tools are absent, use the same fields in a concise text ledger. Do not fail merely because the plugin is missing.
+| 类型 | 证据特征 | 下一步 |
+| --- | --- | --- |
+| A 执行 | 目标与验证可靠，实现未达标 | 局部修正并复测 |
+| B 测量 | 测量冲突、不可复现或覆盖不足 | 先校准验证，不盲改产物 |
+| C 环境 | 需求、资源或核心假设被新事实改变 | 复核目标与适用范围；无权改目标时请用户决策 |
+| D 集成/结构 | 局部通过而整体失败 | 检查依赖和结构，避免重复局部调参 |
 
-The audit assembler never starts a subagent. When the host lacks subagents, serially inspect the selected views and label the result `contextIndependent: false`; this is a fallback with a known coverage limitation, not an independent audit. Treat an open pipeline as `unmeasured`, not healthy. A quality-regression claim requires an external baseline and explicit threshold.
+允许多标签和暂未分类；未知不是 A。先补最小区分性观测，不靠分类措辞制造确定性。
+连续相同修复无新证据时，复核目标、测量与策略；不要仅增加力度或轮次。
+确有竞争解释时，提出最强可辩护替代方案并寻找最低成本区分证据，不凑方案数量。
+独立审计仅在用户要求或明确风险/验证缺口且已有授权与预算时启用；共享上下文自查不能称独立审计。
 
-## Evidence loop
+## 交付与停止
 
-For each requirement or claim, record one of `passed | failed | unverified | blocked` and cite a test, inspection, source, or human confirmation. `unverified` never means passed.
+必要验收项都需可定位的测试、检查、来源或真实用户确认。关键词、模板、自信、模型投票不是证据。
+证据对应当前目标和产物；目标或相关产物改变后复核受影响证据。任务依赖的环境条件亦须有效。
 
-Classify deviations without forcing a single label:
+- **通过**：必要验收全部满足、证据有效、无阻断问题。
+- **部分产物**：提供当前最佳结果，说明 failed/unverified/blocked 项和下一步；说明风险不能把未验证变成通过。
+- **需要输入/受阻**：只有缺少必要信息、权限或可行验证路径时移交；先完成不依赖它们的已授权工作。
 
-- A execution: the intended action did not reach the required result;
-- B measurement: the observation or test is unreliable;
-- C environment: a dependency, objective, or assumption changed;
-- D interaction: individually acceptable parts fail when combined.
+模型回复、工具返回、子代理结束，都不等于验收通过。
+遵守用户/宿主的调用、时间和费用上限；重试计入总额，不自行扩大预算。开放目标不意味着无限自动运行。
+无法判断副作用是否已发生时，先查询/对账；无法确认就报告不确定，避免盲目重复执行。
 
-Respond by mechanism: A may justify a local correction; B freezes correction until measurement is calibrated; C resets the relevant target or assumption; D returns to interfaces and structural models.
+## 仅在需要补足能力时读取
 
-## J-workspace
+- T2：[references/tools-mode.md](references/tools-mode.md)。文件缺席时继续 T1。
+- T3：[references/harness-mode.md](references/harness-mode.md)。必须实际启动才算启用。
+- 独立审计：[references/subagent-validation.md](references/subagent-validation.md)。仅在实际需要审计时读取。
 
-Keep a deliberately limited set of reportable coordination items:
-
-- the active objective;
-- binding constraints;
-- the highest-risk unresolved deviation;
-- the current structural hypothesis;
-- recent human decisions;
-- evidence that is about to become stale.
-
-Every item needs a source, scope, priority, and removal decision. Do not use the workspace as a transcript or memory dump.
-
-## L3/L4 handoff gate
-
-Before delivery:
-
-1. every task required by the objective is verified with current evidence;
-2. dependencies are verified before dependents;
-3. no stale evidence supports a current claim;
-4. no unresolved high/medium deviation remains;
-5. assumptions and environment are still compatible;
-6. L4 has enough genuinely different structural models to expose material disagreement;
-7. human decisions are recorded where authority or values, not evidence alone, determine the answer.
-
-Read [references/runtime-protocol.md](references/runtime-protocol.md) when interpreting plugin states or prompt revisions. Read [references/audit-pipeline.md](references/audit-pipeline.md) before assembling, running, or judging a subagent audit.
+本文件独立可用；不要求为遵循 Skill 而加载上述资源。

@@ -1,0 +1,14 @@
+{
+  "type": "fixture",
+  "responses": [
+    {
+      "action": "write",
+      "path": "report.md",
+      "content": "# Result\nVerified.\n",
+      "expected_hash": null
+    },
+    {
+      "action": "finish"
+    }
+  ]
+}

@@ -38,6 +38,6 @@ describe('runtime visualization', () => {
     expect(html).toContain('Plugin dispatch count: 0')
     expect(html).toContain('operational: unmeasured')
     expect(html).toContain('measurement')
-    expect(html).toContain('integration-regression')
+    expect(html).not.toContain('integration-regression')
   })
 })

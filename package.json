@@ -34,12 +34,13 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsdown && tsc -p tsconfig.json --emitDeclarationOnly",
+    "build": "node scripts/sync-skill.mjs && tsdown && tsc -p tsconfig.json --emitDeclarationOnly",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:examples": "tsx scripts/run-examples.ts",
     "test:integration": "node scripts/integration-test.mjs",
-    "check": "pnpm run typecheck && pnpm run test && pnpm run build && pnpm run test:examples && pnpm run test:integration"
+    "check": "pnpm run typecheck && pnpm run test && pnpm run build && pnpm run test:examples && pnpm run test:integration && pnpm run test:runtime",
+    "test:runtime": "node --test tests/runtime-checks.mjs"
   },
   "keywords": [
     "deepseek-harness",
@@ -64,15 +65,28 @@
     "react": "^18.2.0"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-client-connection": { "optional": true },
-    "@deepseek-ai/dsh-client-runtime": { "optional": true },
-    "@deepseek-ai/dsh-client-ui-conversation": { "optional": true },
-    "@deepseek-ai/dsh-client-ui-slots": { "optional": true },
-    "@deepseek-ai/dsh-host-apiproxy": { "optional": true },
-    "react": { "optional": true }
+    "@deepseek-ai/dsh-client-connection": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-client-runtime": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-client-ui-conversation": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-client-ui-slots": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-host-apiproxy": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "3.18.1"
+    "@deepseek-ai/schemastery": "3.18.1",
+    "@earendil-works/pi-ai": "0.85.1"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "4.0.1",

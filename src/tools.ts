@@ -26,11 +26,12 @@ const toolOutput = {
       revision: { type: 'integer', required: true },
       gatePassed: { type: 'boolean', required: true },
       detail: { type: 'string', required: true },
+      stateJson: { type: 'string', required: true },
     },
   },
-  render: (_args: unknown, value: { workflowId: string; revision: number; gatePassed: boolean; detail: string }) => [{
+  render: (_args: unknown, value: { workflowId: string; revision: number; gatePassed: boolean; detail: string; stateJson: string }) => [{
     type: 'text' as const,
-    text: `${value.detail}\nworkflow=${value.workflowId} revision=${value.revision} gate=${value.gatePassed ? 'PASS' : 'HOLD'}`,
+    text: `${value.detail}\nworkflow=${value.workflowId} revision=${value.revision} gate=${value.gatePassed ? 'PASS' : 'HOLD'}\n${value.stateJson}`,
   }],
 } as const
 
@@ -47,7 +48,8 @@ function ensureOwned(store: WorkflowStore, workflowId: string, owner: string): v
 }
 
 function result(summary: { id: string; revision: number; gate: { passed: boolean } }, detail: string) {
-  return { workflowId: summary.id, revision: summary.revision, gatePassed: summary.gate.passed, detail }
+  return { workflowId: summary.id, revision: summary.revision, gatePassed: summary.gate.passed, detail,
+    stateJson: JSON.stringify({ assurance: 'T2-reported-evidence', workflow: summary }) }
 }
 
 const evidenceSchema = {

@@ -27,14 +27,16 @@ function verifyChain() {
 }
 
 describe('control engine', () => {
-  it('rejects cycles and insufficient explicit L3 decomposition', () => {
+  it('rejects cycles and invalid depth without forcing L3 decomposition quotas', () => {
     const cyclic = l3Seed()
     cyclic.tasks[0]!.dependsOn = ['verify']
     expect(() => validateSeed(cyclic, config)).toThrowError(ControlError)
 
     const shallow = l3Seed()
     shallow.tasks[2]!.depth = 2
-    expect(() => validateSeed(shallow, config)).toThrow(/explicit depth-3/)
+    expect(() => validateSeed(shallow, config)).not.toThrow()
+    shallow.tasks[2]!.depth = 0 as never
+    expect(() => validateSeed(shallow, config)).toThrow(/Invalid task depth/)
   })
 
   it('enforces legal transitions, dependency order, current evidence, and duplicate evidence ids', () => {

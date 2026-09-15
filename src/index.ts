@@ -26,7 +26,7 @@ export const Config: z<Config> = z.object({
   stateFile: z.string(),
   workspaceCapacity: z.natural().min(1).default(6),
   maxPromptChars: z.natural().min(1).default(24_000),
-  l4MinimumModels: z.natural().min(1).default(3),
+  l4MinimumModels: z.natural().min(0).default(0),
   registerBundledSkill: z.boolean().default(true),
 })
 
@@ -43,7 +43,7 @@ export async function apply(ctx: Context, rawConfig: Config = {}): Promise<void>
   const config = {
     workspaceCapacity: rawConfig.workspaceCapacity ?? 6,
     maxPromptChars: rawConfig.maxPromptChars ?? 24_000,
-    l4MinimumModels: rawConfig.l4MinimumModels ?? 3,
+    l4MinimumModels: rawConfig.l4MinimumModels ?? 0,
   }
   const stateFile = resolve(rawConfig.stateFile ?? '.dsh/cybersyn/events.jsonl')
   const store = new JsonlWorkflowStore(stateFile)

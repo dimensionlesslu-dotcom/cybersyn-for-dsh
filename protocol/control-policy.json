@@ -1,0 +1,13 @@
+{
+  "version": "3.0.0",
+  "states": ["passed", "failed", "unverified", "blocked"],
+  "deviationLabels": ["A", "B", "C", "D"],
+  "blockingLabels": ["B", "C", "D"],
+  "blockingSeverities": ["critical", "high", "medium"],
+  "conditionStates": ["confirmed", "contradicted", "unknown"],
+  "defaultRounds": {"L1": 2, "L2": 3, "L3": 5, "L4": 8},
+  "defaultMode": "T1",
+  "toolGaps": ["memory", "evidence", "structured-operations"],
+  "harnessGaps": ["sequencing", "tool-orchestration", "context-loss", "ineffective-loop"],
+  "rules": ["nonempty-acceptance", "complete-coverage", "all-passed", "current-goal", "current-artifact", "no-blocking-deviation", "required-conditions-confirmed"]
+}

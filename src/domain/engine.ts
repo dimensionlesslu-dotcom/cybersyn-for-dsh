@@ -89,12 +89,13 @@ export function validateSeed(seed: WorkflowSeed, config: EngineConfig): void {
   assert(seed.tasks.length > 0, 'At least one task is required', 'EMPTY_GRAPH')
   assert(config.workspaceCapacity > 0, 'Workspace capacity must be positive', 'INVALID_CONFIG')
   assert(config.maxPromptChars > 0, 'Prompt limit must be positive', 'INVALID_CONFIG')
-  assert(config.l4MinimumModels > 0, 'L4 minimum model count must be positive', 'INVALID_CONFIG')
+  assert(Number.isInteger(config.l4MinimumModels) && config.l4MinimumModels >= 0, 'L4 minimum model count must be nonnegative', 'INVALID_CONFIG')
 
   const ids = new Set<string>()
   for (const task of seed.tasks) {
     assert(ID_PATTERN.test(task.id), `Invalid task id: ${task.id}`, 'INVALID_ID')
     assert(!ids.has(task.id), `Duplicate task id: ${task.id}`, 'DUPLICATE_TASK')
+    assert([1, 2, 3, 4].includes(task.depth), 'Invalid task depth', 'INVALID_TASK')
     ids.add(task.id)
     assert(task.title.trim().length > 0, `Task ${task.id} needs a title`, 'INVALID_TASK')
     assert(task.generatedPrompt.trim().length > 0, `Task ${task.id} needs a generated prompt`, 'INVALID_PROMPT')
@@ -109,12 +110,7 @@ export function validateSeed(seed: WorkflowSeed, config: EngineConfig): void {
   }
   assertAcyclic(seed)
 
-  const requiredDepth = seed.level === 'L4' ? 4 : seed.level === 'L3' ? 3 : Number(seed.level.slice(1))
-  const actualDepth = Math.max(...seed.tasks.map(task => task.depth))
-  assert(actualDepth >= requiredDepth, `${seed.level} requires explicit depth-${requiredDepth} decomposition`, 'INSUFFICIENT_DECOMPOSITION')
-  if (seed.level === 'L3' || seed.level === 'L4') {
-    assert(seed.tasks.length >= 3, `${seed.level} requires at least three explicit subtasks`, 'INSUFFICIENT_DECOMPOSITION')
-  }
+  // Complexity is not a quota of tasks, depth, or competing models.
 }
 
 export function createWorkflow(seed: WorkflowSeed, config: EngineConfig, at = new Date().toISOString()): Workflow {
@@ -404,7 +400,7 @@ export function gateReport(workflow: Workflow): GateReport {
     detail: unresolved.length === 0 ? 'No unresolved blocking deviation' : `Unresolved: ${unresolved.join(', ')}`,
   })
 
-  if (workflow.level === 'L4') {
+  if (workflow.level === 'L4' && workflow.config.l4MinimumModels > 0) {
     const active = workflow.models.filter(model => model.status === 'active')
     checks.push({
       id: 'l4_model_competition',

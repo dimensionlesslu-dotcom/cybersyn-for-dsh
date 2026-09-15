@@ -37,7 +37,7 @@ describe('subagent audit assembly and degradation detector', () => {
     let workflow = createWorkflow(l3Seed(), config)
     workflow = planAudit(workflow, auditPlan(workflow.revision))
     const pipeline = workflow.auditPipelines[0]!
-    expect(pipeline.expectedRoles).toEqual(['measurement', 'integration-regression'])
+    expect(pipeline.expectedRoles).toEqual(['measurement'])
     expect(pipeline.packets.every(packet => packet.status === 'planned' && packet.authority === 'read-only')).toBe(true)
     expect(pipeline.packets.every(packet => packet.harnessRunId === '')).toBe(true)
     expect(pipeline.packets[0]!.excludedContext).toEqual(['expected_answer', 'primary_diagnosis', 'proposed_fix', 'peer_outputs'])

@@ -1,12 +1,12 @@
 # Project Cybersyn for DeepSeek Harness
 
-一个完全独立的 DeepSeek Harness 插件，同时附带可脱离插件单独使用的纯 Skill。它把 L3/L4 拆解、证据门、偏差诊断、J-workspace、人类提示词治理，以及子代理审计流水线投影为可回放状态；它不读取、伪造或显示模型隐藏推理。
+本目录包含可选的 DeepSeek Harness 监督插件，以及 v3 新增的独立文件运行器 runtime/。下面的插件说明只描述 DSH 适配。它把 L3/L4 拆解、证据门、偏差诊断、J-workspace、人类提示词治理，以及子代理审计流水线投影为可回放状态；它不读取、伪造或显示模型隐藏推理。
 
 > 目标宿主版本：DeepSeek Harness `0.1.1-rc.2`（developer preview）。插件会在不兼容版本上明确拒绝加载，避免静默错配。
 
 ## 先说清楚：它是什么，不是什么
 
-这是一个离散事件监督器和可视化控制面，不是新的 agent runtime：
+DSH 插件是 T2 监督适配。独立 T3 由 runtime/cli.mjs 提供，说明见 ../references/harness-mode.md。插件自身的职责：
 
 - 插件负责组装只读审计 PromptPacket、记录 Harness 已发生的生命周期事实、计算退化信号并显示结果；
 - DeepSeek Harness 的 `subagent` / `workflow` 能力负责真正创建、并行、取消和回收子代理；
@@ -18,7 +18,7 @@
 
 | 控制面 | 能力 | 关键约束 |
 | --- | --- | --- |
-| `cybersyn_start` | 创建与当前 Harness task/session 绑定的 L1-L4 控制图 | L3/L4 必须显式拆解到对应深度 |
+| `cybersyn_start` | 创建与当前 Harness task/session 绑定的 L1-L4 控制图 | 按实际依赖拆解，不按级别强制深度/任务数 |
 | `cybersyn_task_update` | 登记证据、A/B/C/D 多标签偏差和状态跃迁 | `verified` 必须有当前、逐声明通过的证据 |
 | `cybersyn_workspace_update` | 维护有限容量 J-workspace | 只保存可报告协调事实，不保存隐藏推理 |
 | `cybersyn_model_update` | 维护 L4 竞争结构模型 | 模型需带预测和证伪条件 |
@@ -31,7 +31,7 @@
 
 ## 原 Skill 的只读审计结论
 
-本项目开发时对原 Skill 做了只读检查，没有修改原 Skill。结论不是“原设计没有子代理功能”，而是需要区分三件事：
+以下保留初期只读检查背景；v3 已修订根 Skill 并统一内嵌入口。结论不是“原设计没有子代理功能”，而是需要区分三件事：
 
 1. **组装规则已经显式存在。** 原 Skill 的 `validation_prompt_assembler.py` 会选择 `goal-spec`、`measurement`、`integration-regression`、`environment` 视角，移除 `expected_answer`、`primary_diagnosis`、`proposed_fix`、`peer_outputs`，生成带只读权限和 `Finding[]` 输出约束的 PromptPacket。
 2. **实际启动被有意留给宿主。** 原实现明确写出 assembler 永不启动子代理，Host 决定启动方式与并行度。这与 DeepSeek Harness 的能力边界一致，不是缺陷。
@@ -227,3 +227,8 @@ AutoGen 也被检查过，但其官方仓库已标明 maintenance mode，并建�
 - 审计 PromptPacket 固定只读，工具不接受主答案/主诊断/拟议修复/同伴输出；
 - 外部子代理失败保留为覆盖缺口，不静默转换成成功；
 - 本项目不会自动上传、发布、创建远程仓库或修改原 Skill；远程地址由使用者在测试完成后另行提供。
+
+
+## v3 运行器
+
+运行器复用 src/core.ts 导出的领域控制器，仅以 pi-ai 作为单次模型后端。运行步骤、文件派发、预算和恢复由 Cybersyn 持有。npm/DSH 插件包与 Skill 的 with-harness 包是不同发行目标；运行器通过根 tools/build_package.py 随 Skill 分发。模型可见 DSH 工具返回 stateJson（含任务、证据和完整审计包），assurance 标识为 T2-reported-evidence。默认审计一个视角，显式 requestedRoles 可在预算内增加。

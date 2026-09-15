@@ -50,4 +50,10 @@ const client: UserConfig = {
   },
 }
 
-export default defineConfig([host, client])
+const core: UserConfig = {
+  entry: { core: 'src/core.ts' }, outDir: 'runtime/lib', format: ['esm'],
+  platform: 'node', target: 'es2022', dts: false, clean: true,
+  outputOptions: { entryFileNames: '[name].js' },
+}
+
+export default defineConfig([host, client, core])
